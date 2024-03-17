@@ -1,0 +1,64 @@
+#What is Message records management (MRM) in exchange online mailbox?
+Message Records Management (MRM) in Exchange Online mailbox refers to a set of features and capabilities that allow organizations to manage the lifecycle of email messages and other types of mailbox content. MRM enables administrators to implement policies for retention, archiving, and deletion of email messages based on specified criteria, such as age.
+#How Message records management (MRM) in exchange online works?
+MRM in Exchange Online works using retention tags and retention policies. Administrators can group retention tags into a retention policy, and then apply the policy to a user’s mailbox. Retention tags are used to apply retention settings to folders and individual items. These settings define the time period for which a message remains in a mailbox, and the action to be taken after the message reaches the specified retention age. When a message reaches its retention age, it is either deleted or moved to the user's archive.
+#What is Managed Folder Assistant in MRM?
+The Managed Folder Assistant, a mailbox assistant that runs on Mailbox servers, processes mailboxes that have a retention policy applied.
+#How does Managed Folder Assistant work in MRM?
+ The Managed Folder Assistant applies the retention policy by inspecting items in the mailbox and determining whether they are subject to retention. It then stamps items subject to retention with the appropriate retention tags and takes the specified retention action on items past their retention age.
+#What is Retention in MRM? 
+In Message Records Management (MRM), retention refers to the process of managing the lifecycle of email messages and other mailbox items by specifying how long they should be retained before being automatically deleted or archived. Retention is a key aspect of MRM that helps organizations enforce data retention policies, reduce storage costs, and ensure compliance with regulatory requirements.
+#Why do we need Retention in exchange online mailbox? 
+In Exchange Online mailboxes is essential for ensuring compliance, managing data effectively, reducing risk, and supporting business continuity. By implementing retention policies, organizations can effectively manage the lifecycle of mailbox items and meet their regulatory, legal, and business requirements.
+#What is a Retention Policy in MRM?
+A Retention Policy in Message Records Management (MRM) is a set of rules and settings that determine how long mailbox items, such as emails, calendar items, tasks, and other types of content, should be retained and what actions should be taken at the end of their retention period. Retention policies are a key component of MRM in Exchange Online and help organizations enforce data retention requirements, comply with regulatory standards, and manage mailbox storage efficiently.
+#What is retention tag in MRM? 
+In Message Records Management (MRM), a retention tag is a component of a retention policy that defines the retention settings for specific types of mailbox items. Retention tags specify how long items should be retained and what actions should be taken when the retention period expires.
+#What are the three types of retention tags?
+Default policy tag (DPT) – Applied automatically to the entire mailbox, a DPT applies to untagged items, which are mailbox items that don't have a retention tag applied directly or by inheritance from the folder. It is applied by the administrator, users cannot change it and the actions that a DPT can perform are moving items to an archive mailbox, deleting items and allowing their recovery by the users or permanently deleting items (administrators will still be able to recover these items).
+Retention policy tag (RPT) – Applied automatically to a default folder. Default folders are folders created automatically in all mailboxes, for example: Inbox, Deleted Items, and Sent Items. RPTs are applied by the administrator, cannot be changed by users and have as possible actions, deleting and allowing recovery or permanently delete.
+Personal tag – Applied Manually to items and folders. Users can automate tagging by using Inbox rules to either move a message to a folder that has a particular tag or to apply a personal tag to the message. Available actions for Personal tags are:  moving items to an archive mailbox, deleting items and allowing their recovery by the users or permanently deleting items. Personal tags allow your users to determine how long an item should be retained. For example, the mailbox can have a DPT to delete items in seven years, but a user can create an exception for items such as newsletters and automated notifications by applying a personal tag to delete them in three days.
+#What is retention action in MRM exchange online?
+In Message Records Management (MRM), a retention action refers to the specific action taken on mailbox items when they reach the end of their retention period as defined by the retention policy. Retention actions determine what happens to the mailbox items once they expire according to the policy settings. Common retention actions in MRM include Move to Archive, Delete and Allow Recovery, Permanently Delete
+#What does retention hold in MRM?
+When users are temporarily away from work and do not have access to their e-mail, retention settings can be applied to new messages before they return to work or access their e-mail. Depending on the retention policy, messages may be deleted or moved to the user's personal archive. You can temporarily suspend retention policies from processing a mailbox for a specified period by placing the mailbox on retention hold.
+#What will happen if we delete a retention tag? 
+If a retention tag is removed from a retention policy, any existing mailbox items with the tag applied will continue to expire based on the tag's settings. 
+#If an email moves to another folder, what about the retention tag assigned to the email  tag? 
+A mailbox item moved from one folder to another inherits any tags applied to the folder to which it is moved. If an item is moved to a folder that does not have a tag assigned, the Default Policy Tags (DPT) is applied to it. 
+If the item has a tag explicitly assigned to it, the tag always takes precedence over any folder-level tags or the default tag.
+#PS command used to get assigned retention policy to a mailbox.
+Get-Mailbox -Identity user@domain.com | select RetentionPolicy
+#PS command to expand retention tags of a retention policy.
+Get-RetentionPolicy | select -ExpandProperty RetentionPolicyTagLinks
+#How do we verify if retention hold is enabled in a mailbox?
+Get-Mailbox -Identity user@domain.com | select RetentionHoldEnabled
+#How to validate if MRM has processed the mailbox recently using PS command?
+Get-MailboxFolderStatistics -Identity user@domain.com -IncludeOldestAndNewestItems | ? {$_.Name -eq 'Inbox'} | fl Name,*oldest*,*newest*
+#What does litigation hold in MRM?
+Litigation Hold puts the entire mailbox content on hold. You can specify the time period and if you do not set a duration, the items are held indefinitely or until you remove the hold. Again, items received or created from the start of the hold and through the end will be kept.
+#How to identify the status of any hold in a mailbox using PowerShell?
+Get-Mailbox -Identity user@domain.com | select *hold*
+#What is a recoverable items folder? 
+To protect from accidental or malicious deletion and to facilitate discovery efforts commonly undertaken before or during litigation or investigations, Exchange Online uses the Recoverable Items folder.
+#What is Delete terminology in exchange online mailbox?
+Describes when an item is deleted from any folder and placed in the Deleted Items default folder.
+#What is Soft Delete terminology in exchange online mailbox?
+Describes when an item is deleted from the Deleted Items default folder and placed in the Recoverable Items folder. Also describes when an Outlook user deletes an item by pressing Shift+Delete, which bypasses the Deleted Items folder and places the item directly in the Recoverable Items folder.
+#What is Hard Delete terminology in exchange online mailbox?
+Describes when an item is marked to be purged from the mailbox database. This is also known as a store hard delete. 
+#Where can we find the recoverable items folder? 
+Each user mailbox is divided into two subtrees. The IPM (interpersonal messaging) subtree, which contains the normal, visible folders and the non-IPM subtree, which contains internal data, preferences, and other operational data about the mailbox. The Recoverable Items folder resides in the non-IPM subtree of each mailbox. This subtree is not visible to users using Outlook, Outlook on the web (formerly known as Outlook Web App), or other email clients.
+#What are sub folders of recoverable items folder? 
+Deletions: This subfolder contains all items deleted from the Deleted Items folder. 
+Versions: If In-Place Hold, Litigation Hold, or a Microsoft 365 or Office 365 retention policy is enabled, this subfolder contains the original copy of the item and if the item is modified multiple times, a copy of the item before modification is saved. 
+Purges: If either Litigation Hold or single item recovery is enabled, this subfolder contains all items that are hard deleted. This folder is not visible to end users.
+Audits: If mailbox audit logging is enabled for a mailbox, this subfolder contains the audit log entries
+DiscoveryHolds: If In-Place Hold is enabled or if a Microsoft 365 or Office 365 retention policy is assigned to the mailbox, this subfolder contains all items that meet the hold query parameters and are hard deleted.
+Calendar Logging: This subfolder contains calendar changes that occur within a mailbox. This folder is not available to users.
+SubstrateHolds: If In-Place Hold, Litigation Hold, or a Microsoft 365 or Office 365 Teams Chat retention policy is enabled, this subfolder contains the original copy of the Teams message if the message has been modified or deleted. A copy of the item before modification is saved. This folder is not visible to end users.
+#What is single item folder recovery? 
+Is a feature in Microsoft Exchange Server and Exchange Online; If an item is removed from the Deletions subfolder, either by a user purging the item by using the Recover Deleted Items feature or by an automated process such as the Managed Folder Assistant (retention tag set to permanently delete for example), the item is moved to the Purges subfolder, and it can't be recovered by the user. 
+When the Managed Folder Assistant processes the Recoverable Items folder for a mailbox that has single item recovery enabled, any item in the Purges subfolder is not purged if the deleted item retention period has not expired for that item. This means that an admin can still recover the item by using an eDiscovery tool such as In-Place eDiscovery or Content Search.
+#What is archive in exchange online mailbox?
+In Exchange Online, an archive mailbox is a secondary mailbox associated with a user's primary mailbox. It provides additional storage capacity for storing historical or less frequently accessed email messages and other items. The archive mailbox is typically used to retain and manage large volumes of mailbox data while keeping the primary mailbox size manageable.
